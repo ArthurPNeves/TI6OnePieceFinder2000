@@ -15,6 +15,11 @@ def split_image_horizontally(image):
     mid_point = height // 2
 
     top_half = image[:mid_point, :]
+    
+    mid_point = width // 2
+    
+    top_half = top_half[:, :mid_point]
+    
     bottom_half = image[mid_point:, :]
 
     return top_half, bottom_half
@@ -60,10 +65,9 @@ def split_folder_images(input_folder, output_folder):
             # Define os nomes dos arquivos de saída
             name, ext = os.path.splitext(filename)
             top_filename = f"{name}_top{ext}"
-            bottom_filename = f"{name}_bottom{ext}"
 
             # Define os caminhos completos para salvar as imagens divididas
-            top_output_path = os.path.join(output_folder, top_filename)
+            top_output_path = os.path.join(output_folder, filename)
             #bottom_output_path = os.path.join(output_folder, bottom_filename)
 
             # Salva as imagens divididas
@@ -77,8 +81,8 @@ def split_folder_images(input_folder, output_folder):
 
 
 # Caminho para a pasta com imagens originais
-input_folder = 'frames1Dowscale40x30'  # Substitua pelo caminho da sua pasta de entrada
+input_folder = 'frames20x15grey'  # Substitua pelo caminho da sua pasta de entrada
 # Caminho para a pasta onde as imagens divididas serão salvas
-output_folder = 'frames1Dowscale40x30Metade'  # Substitua pelo caminho da sua pasta de saída
+output_folder = 'frames20x15grey1quarto'  # Substitua pelo caminho da sua pasta de saída
 # Executa a divisão das imagens
 split_folder_images(input_folder, output_folder)

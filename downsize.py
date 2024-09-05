@@ -38,13 +38,13 @@ def downscale_folder_images(input_folder, output_folder, scale_factor=0.5):
             #print(f"Imagem {filename} redimensionada e salva em {output_path}")
 
 # Caminho para a pasta de entrada com imagens originais
-input_folder = 'frames40x30Grey'
+input_folder = 't1'
 
 # Caminho para a pasta de saída onde as imagens redimensionadas serão salvas
-output_folder = 'frames40x30Grey'
+output_folder = 't1'
 
 # Fator de escala para redimensionar as imagens (ex: 0.5 = 50% do tamanho original)
-scale_factor = 0.0625
+scale_factor = 0.5
 
 # Executa o redimensionamento das imagens na pasta
 downscale_folder_images(input_folder, output_folder, scale_factor)

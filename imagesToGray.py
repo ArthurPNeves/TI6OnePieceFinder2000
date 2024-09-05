@@ -7,7 +7,7 @@ def convert_images_to_gray(folder_path):
     """
     for filename in os.listdir(folder_path):
         file_path = os.path.join(folder_path, filename)
-        outputFolder = os.path.join('frames40x30Grey', filename)
+        outputFolder = os.path.join('t1', filename)
         # Carrega a imagem
         image = cv2.imread(file_path)
 
@@ -18,6 +18,6 @@ def convert_images_to_gray(folder_path):
         
         cv2.imwrite(outputFolder, gray_image)
 
-folder_path = 'frames1'
-output_path = 'frames40x30Grey'
+folder_path = 't1'
+output_path = 't1'
 convert_images_to_gray(folder_path)
