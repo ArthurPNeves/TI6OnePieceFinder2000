@@ -1,6 +1,7 @@
 import cv2
-from skimage.metrics import structural_similarity as ssim
+import time
 from concurrent.futures import ThreadPoolExecutor
+from skimage.metrics import structural_similarity as ssim
 import ImageDownsizer, ImageFinder, ImageConverter, ImageSplitter, EpisodeToFrames
 
 
@@ -67,6 +68,11 @@ if __name__ == '__main__':
     finder = ImageFinder.ImageFinder()
     # Caminho para a imagem do usuário
     user_image_path = './DesiredFrame/nami40x30.jpg'
+
+
+    user_imagePathOrigim = 'nami40x30.jpg' ##
+
+
     # Caminho para a pasta com imagens
     folder_path = './ProcessedOutput'
 
@@ -74,8 +80,23 @@ if __name__ == '__main__':
 
     # Carrega a imagem do usuário
     user_image = cv2.imread(user_image_path)
+    
+    user_imageOrigin = cv2.imread(user_imagePathOrigim)
+    
+    
     # Compara a imagem do usuário com as imagens na pasta
     top_matches = finder.compare_images(user_image, folder_path)
+
+
+    start_time1 = time.time()
+
+    ImagensUpscale = finder.upScaleTop100Images('frames40x30', top_matches)
+    end_time1 = time.time()
+    total_time1 = end_time1 - start_time1
+    print(f"Tempo total de Upscale: {total_time1:.2f} segundos")
+
+    top3 = finder.compare_imagesImgPaths(user_imageOrigin, ImagensUpscale)
+
 
     # Imprime os nomes das 3 imagens mais semelhantes
     print("As 3 imagens mais semelhantes são:")
