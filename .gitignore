@@ -22,3 +22,13 @@ Thumbs.db
 
 #Google Drive
 desktop.ini
+
+#JPGs MKVs
+*.jpg
+*.mkv
+
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd

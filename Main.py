@@ -25,7 +25,7 @@ def imageProcessing():
     scale_factor = 0.0625
 
     # Create an instance of ImageDownsizer
-    downsizer = ImageDownsizer(scale_factor)
+    downsizer = ImageDownsizer.ImageDownsizer(scale_factor)
     # Executa o redimensionamento das imagens na pasta
     downsizer.downscale_folder_images(rawInputfolder, donwSizeOutput)
     ####
@@ -34,15 +34,15 @@ def imageProcessing():
     # Usage example
     donwSizeInput = donwSizeOutput
     convertedOutput = './ImageProcessing/GrayScaleImage'
-    converter = ImageConverter(donwSizeInput, convertedOutput)
+    converter = ImageConverter.ImageConverter(donwSizeInput, convertedOutput)
     converter.convert_images_to_gray()
     ####
     
     ####IMAGE SPLITTER DEMONSTRATION    
     convertedInput = convertedOutput  # Substitua pelo caminho da sua pasta de entrada
-    output_folder = './ProcessingOutput'  # Substitua pelo caminho da sua pasta de saída
+    output_folder = './ProcessedOutput'  # Substitua pelo caminho da sua pasta de saída
 
-    splitter = ImageSplitter(convertedInput, output_folder)
+    splitter = ImageSplitter.ImageSplitter(convertedInput, output_folder)
     splitter.split_folder_images()
     ####
 
@@ -64,11 +64,13 @@ if __name__ == '__main__':
     
     ####IMAGE LOADING AND SEARCHING
     
-    finder = ImageFinder()
+    finder = ImageFinder.ImageFinder()
     # Caminho para a imagem do usuário
     user_image_path = './DesiredFrame/nami40x30.jpg'
     # Caminho para a pasta com imagens
-    folder_path = './ProcessingOutput'
+    folder_path = './ProcessedOutput'
+
+    imageProcessing()
 
     # Carrega a imagem do usuário
     user_image = cv2.imread(user_image_path)
