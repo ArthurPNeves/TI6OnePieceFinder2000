@@ -11,9 +11,11 @@ class ImageFinder:
     @staticmethod
     def compare_imagesImgPaths(user_image, image_paths):
         ssim_scores = []
+        
+        user_gray = cv2.cvtColor(user_image, cv2.COLOR_BGR2GRAY)
+
 
         # Converte a imagem do usuário para escala de cinza
-        #user_gray = cv2.cvtColor(user_image, cv2.COLOR_BGR2GRAY)
 
         #height, width = user_gray.shape[:2]
         #mid_point = height // 2
@@ -32,7 +34,7 @@ class ImageFinder:
             futures = []
             for image_path in image_paths:
                 print(image_path)
-                futures.append(executor.submit(ImageFinder.calculate_ssim, image_path, user_image))
+                futures.append(executor.submit(ImageFinder.calculate_ssim, image_path, user_gray))
 
             for future in futures:
                 score, filename = future.result()
@@ -104,7 +106,9 @@ class ImageFinder:
 
         height, width = user_gray.shape[:2]
         mid_point = height // 2
+        half_point = width // 2
         top_half = user_gray[:mid_point, :]
+        top_half = top_half[:, :half_point]
 
         print("Comparing images...")
         start_time = time.time()
@@ -131,5 +135,5 @@ class ImageFinder:
         total_time1 = end_time1 - start_time1
         print(f"Total sorting time: {total_time1:.2f} seconds")
 
-        top_matches = ssim_scores[:3]
+        top_matches = ssim_scores[:100]
         return top_matches

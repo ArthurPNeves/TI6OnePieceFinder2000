@@ -67,16 +67,16 @@ if __name__ == '__main__':
     
     finder = ImageFinder.ImageFinder()
     # Caminho para a imagem do usuário
-    user_image_path = './DesiredFrame/nami40x30.jpg'
+    user_image_path = 'nami20x15grey.jpg'
 
 
     user_imagePathOrigim = 'nami40x30.jpg' ##
 
 
     # Caminho para a pasta com imagens
-    folder_path = './ProcessedOutput'
+    folder_path = 'frames20x15grey1quarto'
 
-    imageProcessing()
+    #imageProcessing()
 
     # Carrega a imagem do usuário
     user_image = cv2.imread(user_image_path)
@@ -100,6 +100,6 @@ if __name__ == '__main__':
 
     # Imprime os nomes das 3 imagens mais semelhantes
     print("As 3 imagens mais semelhantes são:")
-    for score, filename in top_matches:
+    for score, filename in top3:
         print(f"{filename} com SSIM: {score:.4f}")
     ####
