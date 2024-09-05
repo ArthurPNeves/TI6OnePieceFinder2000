@@ -6,12 +6,15 @@ from skimage.metrics import structural_similarity as ssim
 from concurrent.futures import ThreadPoolExecutor
 import os
 import shutil
+from joblib import Parallel, delayed
 
 import os
 
 def compare_imagesImgPaths(user_image, image_paths):
     ssim_scores = []
     
+    user_gray = cv2.cvtColor(user_image, cv2.COLOR_BGR2GRAY)
+
     # Converte a imagem do usuário para escala de cinza
     #user_gray = cv2.cvtColor(user_image, cv2.COLOR_BGR2GRAY)
     
@@ -35,7 +38,7 @@ def compare_imagesImgPaths(user_image, image_paths):
             #print(user_image)
             #print(image_path)
             print(image_path)
-            futures.append(executor.submit(calculate_ssim, image_path, user_image))
+            futures.append(executor.submit(calculate_ssim, image_path, user_gray))
 
         for future in futures:
             score, image_path = future.result()
@@ -119,15 +122,34 @@ def compare_images(user_image, folder_path):
     start_time = time.time()
 
     # Use ThreadPoolExecutor for parallel processing
-    with ThreadPoolExecutor() as executor:
-        futures = []
-        for filename in os.listdir(folder_path):
-            file_path = os.path.join(folder_path, filename)
-            futures.append(executor.submit(calculate_ssim, file_path, top_half))
+    #with ThreadPoolExecutor() as executor:
+    #    futures = []
+    #    for filename in os.listdir(folder_path):
+    #        file_path = os.path.join(folder_path, filename)
+    #        futures.append(executor.submit(calculate_ssim, file_path, top_half))
 
-        for future in futures:
-            score, filename = future.result()
-            ssim_scores.append((score, filename))
+    #    for future in futures:
+    #        score, filename = future.result()
+    #ssim_scores.append((score, filename))
+
+    
+
+        # Função que será executada em paralelo
+    def process_file(file_path, top_half):
+        return calculate_ssim(file_path, top_half)
+
+    # Função para calcular SSIM em paralelo
+    def calculate_ssim_parallel(folder_path, top_half, n_jobs=-1):
+        file_paths = [os.path.join(folder_path, filename) for filename in os.listdir(folder_path)]
+    
+        results = Parallel(n_jobs=n_jobs)(delayed(process_file)(file_path, top_half) for file_path in file_paths)
+    
+        ssim_scores = [(score, os.path.basename(file_path)) for score, file_path in results]
+    
+        return ssim_scores
+
+    # Exemplo de uso
+    ssim_scores = calculate_ssim_parallel(folder_path, top_half)
 
     # Timing end
     end_time = time.time()
@@ -147,7 +169,7 @@ def compare_images(user_image, folder_path):
     return top_matches
 
 # Caminho para a imagem do usuário
-user_image_path = './DesiredFrame/nami40x30.jpg'
+user_image_path = 'nami20x15grey.jpg'
 
 user_imagePathOrigim = 'nami40x30.jpg'
 # Caminho para a pasta com imagens
