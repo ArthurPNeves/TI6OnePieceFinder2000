@@ -147,7 +147,7 @@ def compare_images(user_image, folder_path):
     return top_matches
 
 # Caminho para a imagem do usuário
-user_image_path = 'nami20x15grey.jpg'
+user_image_path = './DesiredFrame/nami40x30.jpg'
 
 user_imagePathOrigim = 'nami40x30.jpg'
 # Caminho para a pasta com imagens
