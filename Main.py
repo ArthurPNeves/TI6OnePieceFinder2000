@@ -18,12 +18,12 @@ Preset = Downsize, GrayScale, Split
 def imageProcessing():
     ######DOWNSIZER DEMOSNTRATION
     # Caminho para a pasta de entrada com imagens originais
-    rawInputfolder = './ProcessingInput'
+    rawInputfolder = 'frames20x15grey'
     # Caminho para a pasta de saída onde as imagens redimensionadas serão salvas
-    donwSizeOutput = './ImageProcessing/DownSizeImages'
+    donwSizeOutput = 'frames4x3grey'
 
     # Fator de escala para redimensionar as imagens (ex: 0.5 = 50% do tamanho original)
-    scale_factor = 0.0625
+    scale_factor = 0.2
 
     # Create an instance of ImageDownsizer
     downsizer = ImageDownsizer.ImageDownsizer(scale_factor)
@@ -33,18 +33,18 @@ def imageProcessing():
     
     ####IMAGE CONVERTER DEMONSTRATION
     # Usage example
-    donwSizeInput = donwSizeOutput
-    convertedOutput = './ImageProcessing/GrayScaleImage'
-    converter = ImageConverter.ImageConverter(donwSizeInput, convertedOutput)
-    converter.convert_images_to_gray()
+    #donwSizeInput = donwSizeOutput
+    #convertedOutput = './ImageProcessing/GrayScaleImage'
+    #converter = ImageConverter.ImageConverter(donwSizeInput, convertedOutput)
+    #converter.convert_images_to_gray()
     ####
     
     ####IMAGE SPLITTER DEMONSTRATION    
-    convertedInput = convertedOutput  # Substitua pelo caminho da sua pasta de entrada
-    output_folder = './ProcessedOutput'  # Substitua pelo caminho da sua pasta de saída
+    #convertedInput = convertedOutput  # Substitua pelo caminho da sua pasta de entrada
+    #output_folder = 'frames10x7grey1quarto'  # Substitua pelo caminho da sua pasta de saída
 
-    splitter = ImageSplitter.ImageSplitter(convertedInput, output_folder)
-    splitter.split_folder_images()
+    #splitter = ImageSplitter.ImageSplitter(convertedInput, output_folder)
+    #splitter.split_folder_images()
     ####
 
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
 
     # Caminho para a pasta com imagens
-    folder_path = 'frames20x15grey1quarto'
+    folder_path = 'frames4x3grey'
 
     #imageProcessing()
 

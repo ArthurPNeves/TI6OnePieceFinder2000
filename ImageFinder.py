@@ -104,11 +104,11 @@ class ImageFinder:
         ssim_scores = []
         user_gray = cv2.cvtColor(user_image, cv2.COLOR_BGR2GRAY)
 
-        height, width = user_gray.shape[:2]
-        mid_point = height // 2
-        half_point = width // 2
-        top_half = user_gray[:mid_point, :]
-        top_half = top_half[:, :half_point]
+        #height, width = user_gray.shape[:2]
+        #mid_point = height // 2
+        #half_point = width // 2
+        #top_half = user_gray[:mid_point, :]
+        #top_half = top_half[:, :half_point]
 
         print("Comparing images...")
         start_time = time.time()
@@ -117,7 +117,7 @@ class ImageFinder:
             futures = []
             for filename in os.listdir(folder_path):
                 file_path = os.path.join(folder_path, filename)
-                futures.append(executor.submit(self.calculate_ssim, file_path, top_half))
+                futures.append(executor.submit(self.calculate_ssim, file_path, user_gray))
 
             for future in futures:
                 score, filename = future.result()
