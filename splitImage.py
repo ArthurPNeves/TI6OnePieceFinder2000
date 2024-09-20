@@ -81,8 +81,8 @@ def split_folder_images(input_folder, output_folder):
 
 
 # Caminho para a pasta com imagens originais
-input_folder = 'frames20x15grey'  # Substitua pelo caminho da sua pasta de entrada
+input_folder = 't1'  # Substitua pelo caminho da sua pasta de entrada
 # Caminho para a pasta onde as imagens divididas serão salvas
-output_folder = 'frames20x15grey1quarto'  # Substitua pelo caminho da sua pasta de saída
+output_folder = 't2'  # Substitua pelo caminho da sua pasta de saída
 # Executa a divisão das imagens
 split_folder_images(input_folder, output_folder)

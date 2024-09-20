@@ -67,14 +67,14 @@ if __name__ == '__main__':
     
     finder = ImageFinder.ImageFinder()
     # Caminho para a imagem do usuário
-    user_image_path = 'nami20x15grey.jpg'
+    user_image_path = 'nami20x15grey14.jpg'
 
 
     user_imagePathOrigim = 'nami40x30.jpg' ##
 
 
     # Caminho para a pasta com imagens
-    folder_path = 'frames4x3grey'
+    folder_path = 'frames20x15grey1quarto'
 
     #imageProcessing()
 
@@ -86,7 +86,11 @@ if __name__ == '__main__':
     
     # Compara a imagem do usuário com as imagens na pasta
     top_matches = finder.compare_images(user_image, folder_path)
-
+    # Imprime os nomes das 3 imagens mais semelhantes
+    print("As 3 imagens mais semelhantes são:")
+    for score, filename in top_matches:
+        print(f"{filename} com PIXEL X PIXEL: {score:.4f}")
+    ####
 
     start_time1 = time.time()
 

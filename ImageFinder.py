@@ -1,6 +1,7 @@
 import cv2
 import os
 import time
+import numpy as np
 from skimage.metrics import structural_similarity as ssim
 from concurrent.futures import ThreadPoolExecutor
 
@@ -99,6 +100,19 @@ class ImageFinder:
     def calculate_ssim(file_path, user_gray):
         folder_image = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
         return ssim(user_gray, folder_image, full=False), os.path.basename(file_path)
+    
+    @staticmethod
+    def pixelPorPixel(file_path, user_gray):
+        
+        folder_image = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
+        
+        
+        # Calcula a diferença de cada pixel entre as imagens
+        diff = (folder_image - user_gray) ** 2
+        # Calcula a média das diferenças ao longo de todos os pixels
+        error = np.mean(diff)
+        return error, os.path.basename(file_path)
+
 
     def compare_images(self, user_image, folder_path):
         ssim_scores = []
@@ -117,7 +131,7 @@ class ImageFinder:
             futures = []
             for filename in os.listdir(folder_path):
                 file_path = os.path.join(folder_path, filename)
-                futures.append(executor.submit(self.calculate_ssim, file_path, user_gray))
+                futures.append(executor.submit(self.pixelPorPixel, file_path, user_gray))
 
             for future in futures:
                 score, filename = future.result()
@@ -130,7 +144,7 @@ class ImageFinder:
         print("Sorting images...")
         start_time1 = time.time()
 
-        ssim_scores.sort(reverse=True, key=lambda x: x[0])
+        ssim_scores.sort(reverse=False, key=lambda x: x[0])
         end_time1 = time.time()
         total_time1 = end_time1 - start_time1
         print(f"Total sorting time: {total_time1:.2f} seconds")
