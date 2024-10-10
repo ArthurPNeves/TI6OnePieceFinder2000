@@ -4,6 +4,9 @@ import time
 import numpy as np
 from skimage.metrics import structural_similarity as ssim
 from concurrent.futures import ThreadPoolExecutor
+import h5py
+from multiprocessing import Pool
+import lmdb
 
 class ImageFinder:
     def __init__(self):
@@ -78,6 +81,24 @@ class ImageFinder:
                 print(f"Arquivo não encontrado: {frame_path}")
 
         return upscale_images
+    
+
+    
+    def load_images_from_lmdb(self, lmdb_path):
+        images = []
+        env = lmdb.open(lmdb_path, readonly=True)
+
+        with env.begin() as txn:
+            cursor = txn.cursor()
+            for key, value in cursor:
+                # Decodifica a imagem
+                img = cv2.imdecode(np.frombuffer(value, np.uint8), cv2.IMREAD_GRAYSCALE)
+                filename = key.decode('ascii')
+                images.append((img, filename))
+
+        return images
+
+
 
     @staticmethod
     def resize_image_to_match(image, target_size):
@@ -102,45 +123,56 @@ class ImageFinder:
         return ssim(user_gray, folder_image, full=False), os.path.basename(file_path)
     
     @staticmethod
-    def pixelPorPixel(file_path, user_gray):
-        
-        folder_image = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
-        
-        
-        # Calcula a diferença de cada pixel entre as imagens
-        diff = (folder_image - user_gray) ** 2
-        # Calcula a média das diferenças ao longo de todos os pixels
+    def pixelPorPixel(folder_image, user_gray):
+        # Calculates pixel-wise difference
+        diff = (folder_image[0] - user_gray) ** 2
         error = np.mean(diff)
-        return error, os.path.basename(file_path)
-
+        return error, folder_image[1]
+    
+    @staticmethod
+    def load_images_parallel(folder_path):
+        images = []
+    
+        def load_image(filename):
+            file_path = os.path.join(folder_path, filename)
+            img = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
+            return (img, filename)
+    
+        with ThreadPoolExecutor() as executor:
+            futures = [executor.submit(load_image, filename) for filename in sorted(os.listdir(folder_path))]
+    
+            for future in futures:
+                image = future.result()
+                if image[0] is not None:
+                    images.append(image)
+    
+        return images
+    
 
     def compare_images(self, user_image, folder_path):
         ssim_scores = []
         user_gray = cv2.cvtColor(user_image, cv2.COLOR_BGR2GRAY)
 
-        #height, width = user_gray.shape[:2]
-        #mid_point = height // 2
-        #half_point = width // 2
-        #top_half = user_gray[:mid_point, :]
-        #top_half = top_half[:, :half_point]
-
+        # Loading images from folder
+        print("Loading images...")
+        start_time = time.time()
+        images = self.load_images_from_lmdb(folder_path)
+        end_time = time.time()
+        print(f"Total loading time: {end_time - start_time:.2f} seconds")
+        start_time1 = time.time()
+        # Comparing images using ThreadPoolExecutor
         print("Comparing images...")
         start_time = time.time()
-
         with ThreadPoolExecutor() as executor:
-            futures = []
-            for filename in os.listdir(folder_path):
-                file_path = os.path.join(folder_path, filename)
-                futures.append(executor.submit(self.pixelPorPixel, file_path, user_gray))
+            futures = [executor.submit(self.pixelPorPixel, img, user_gray) for img in images]
+
 
             for future in futures:
                 score, filename = future.result()
                 ssim_scores.append((score, filename))
-
+        
         end_time = time.time()
-        total_time = end_time - start_time
-        print(f"Total comparison time: {total_time:.2f} seconds")
-
+        print(f"Total comparison time: {end_time - start_time:.2f} seconds")
         print("Sorting images...")
         start_time1 = time.time()
 

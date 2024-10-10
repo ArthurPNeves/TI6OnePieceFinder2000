@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
 
     # Caminho para a pasta com imagens
-    folder_path = 'frames20x15grey1quarto'
+    folder_path = 'frames20x15grey1quarto.lmdb'
 
     #imageProcessing()
 
