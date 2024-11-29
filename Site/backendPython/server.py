@@ -58,7 +58,17 @@ def process_image():
         except Exception as e:
             print(f"Error generating JSON data: {e}")
             return jsonify({"error": "Error generating JSON data"}), 500
-
+        
+        # Delete all images inside the uploads folder
+        for file_name in os.listdir(app.config['UPLOAD_FOLDER']):
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], file_name)
+            try:
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+                    print(f"Deleted file: {file_path}")
+            except Exception as e:
+                print(f"Error deleting file {file_path}: {e}")
+        
         # Return the JSON data to the front-end
         return jsonify(json_data), 200
 
