@@ -34,16 +34,21 @@ class ImageFinder:
         start_time = time.time()
 
         # Processamento paralelo das imagens
+       # Assuming image_paths and user_gray are defined
         with ThreadPoolExecutor() as executor:
             futures = []
-            for image_path in image_paths:
-                print(image_path)
-                futures.append(executor.submit(ImageFinder.calculate_ssim, image_path, user_gray))
+            for image_path, episodenumber in image_paths:
+                # Store the Future and episodenumber in a tuple
+                future = executor.submit(ImageFinder.calculate_ssim, image_path, user_gray)
+                futures.append((future, episodenumber))
 
-            for future in futures:
+            ssim_scores = []
+            for future, episodenumber in futures:
+                # Extract the score and filename from the Future's result
                 score, filename = future.result()
-                ssim_scores.append((score, filename))
-
+                # Append the score, filename, and episodenumber to the results list
+                ssim_scores.append((score, filename, episodenumber))
+                
         # Fim do temporizador
         end_time = time.time()
         total_time = end_time - start_time
@@ -66,17 +71,13 @@ class ImageFinder:
     def upScaleTop100Images(upScalePath, top100):
         upscale_images = []
 
-        for score, filename in top100:
-            # Extrai o número do nome do arquivo (ex: "frame_0001.jpg" -> "0001")
-            # frame_number = filename.split('_')[1].split('.')[0]  # Extrai "0001" de "frame_0001.jpg"
-
-            # Constrói o nome do arquivo correspondente no upScalePath
-            # frame_name = f"frames_{frame_number}.jpg"
-            frame_path = os.path.join(upScalePath, filename)
+        for score, filename, episode_number in top100:
+            episode_folder = f"Episode_{str(episode_number).zfill(2)}"
+            frame_path = os.path.join(upScalePath, episode_folder, filename)
 
             # Verifica se o arquivo existe
             if os.path.exists(frame_path):
-                upscale_images.append(frame_path)
+                upscale_images.append((frame_path, episode_number))
             else:
                 print(f"Arquivo não encontrado: {frame_path}")
 
@@ -121,6 +122,11 @@ class ImageFinder:
     def calculate_ssim(file_path, user_gray):
         folder_image = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
         return ssim(user_gray, folder_image, full=False), os.path.basename(file_path)
+    
+    
+    @staticmethod
+    def calculate_ssimImgs(imgs, user_gray):
+        return ssim(user_gray, imgs, full=False), os.path.basename(file_path)
     
     @staticmethod
     def pixelPorPixel(folder_image, user_gray):
@@ -183,7 +189,7 @@ class ImageFinder:
 
     def compare_images(self, user_image, folder_path):
         ssim_scores = []
-        user_gray = cv2.cvtColor(user_image, cv2.COLOR_BGR2GRAY)
+        user_gray = user_image
 
         # Loading images from folder
         print("Loading images...")
@@ -197,6 +203,42 @@ class ImageFinder:
         start_time = time.time()
         with ThreadPoolExecutor() as executor:
             futures = [executor.submit(self.pixelPorPixel, img, user_gray) for img in images]
+
+
+            for future in futures:
+                score, filename = future.result()
+                ssim_scores.append((score, filename))
+        
+        end_time = time.time()
+        print(f"Total comparison time: {end_time - start_time:.2f} seconds")
+        print("Sorting images...")
+        start_time1 = time.time()
+
+        ssim_scores.sort(reverse=False, key=lambda x: x[0])
+        end_time1 = time.time()
+        total_time1 = end_time1 - start_time1
+        print(f"Total sorting time: {total_time1:.2f} seconds")
+
+        top_matches = ssim_scores[:100]
+        return top_matches
+
+
+    def backup(self, user_image, folder_path):
+        ssim_scores = []
+        user_gray = cv2.cvtColor(user_image, cv2.COLOR_BGR2GRAY)
+
+        # Loading images from folder
+        print("Loading images...")
+        start_time = time.time()
+        images = self.load_images_from_lmdb(folder_path)
+        end_time = time.time()
+        print(f"Total loading time: {end_time - start_time:.2f} seconds")
+        start_time1 = time.time()
+        # Comparing images using ThreadPoolExecutor
+        print("Comparing images...")
+        start_time = time.time()
+        with ThreadPoolExecutor() as executor:
+            futures = [executor.submit(self.calculate_ssimImgs, img, user_gray) for img in images]
 
 
             for future in futures:
