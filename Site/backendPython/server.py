@@ -4,6 +4,7 @@ import os
 from werkzeug.utils import secure_filename
 from PIL import Image
 import codigoArthur 
+import Main
 import time
 import random
 
@@ -48,7 +49,7 @@ def process_image():
 
         # Retrieve JSON data from codigoArthur.py
         try:
-            json_data = codigoArthur.jsonback(uploaded_file_path)
+            json_data = Main.processar_episodios()
             print(f"Generated JSON data: {json_data}")
         except Exception as e:
             print(f"Error generating JSON data: {e}")
@@ -73,4 +74,4 @@ def process_image():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='http://54.81.167.53:5000/api/process', port=5000)
