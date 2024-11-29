@@ -2,6 +2,7 @@ import cv2
 import time
 from concurrent.futures import ThreadPoolExecutor
 from skimage.metrics import structural_similarity as ssim
+import ImageDownsizer
 import  ImageFinder
 
 
@@ -26,7 +27,7 @@ def imageProcessing():
     scale_factor = 0.2
 
     # Create an instance of ImageDownsizer
-    downsizer = ImageDownsizer.ImageDownsizer(scale_factor)
+    downsizer = ImageDownsizer.ImageDownsizer(scale_factor, 2)
     # Executa o redimensionamento das imagens na pasta
     downsizer.downscale_folder_images(rawInputfolder, donwSizeOutput)
     ####
@@ -65,7 +66,7 @@ if __name__ == '__main__':
     
     ####IMAGE LOADING AND SEARCHING
     
-    finder = ImageFinder.ImageFinder()
+    finder = ImageFinder.ImageFinder(num_threads=2)
     # Caminho para a imagem do usuário
     user_image_path = 'nami20x15grey14.jpg'
 
@@ -86,11 +87,6 @@ if __name__ == '__main__':
     
     # Compara a imagem do usuário com as imagens na pasta
     top_matches = finder.compare_images(user_image, folder_path)
-    # Imprime os nomes das 3 imagens mais semelhantes
-    print("As 3 imagens mais semelhantes são:")
-    for score, filename in top_matches:
-        print(f"{filename} com PIXEL X PIXEL: {score:.4f}")
-    ####
 
     start_time1 = time.time()
 

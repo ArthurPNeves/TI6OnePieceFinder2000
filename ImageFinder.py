@@ -9,8 +9,8 @@ from multiprocessing import Pool
 import lmdb
 
 class ImageFinder:
-    def __init__(self):
-        pass
+    def __init__(self, num_threads = 4):
+        self.num_threads = num_threads  # Número de threads configurável
 
     @staticmethod
     def compare_imagesImgPaths(user_image, image_paths):
@@ -37,7 +37,6 @@ class ImageFinder:
         with ThreadPoolExecutor() as executor:
             futures = []
             for image_path in image_paths:
-                print(image_path)
                 futures.append(executor.submit(ImageFinder.calculate_ssim, image_path, user_gray))
 
             for future in futures:
@@ -195,9 +194,11 @@ class ImageFinder:
         # Comparing images using ThreadPoolExecutor
         print("Comparing images...")
         start_time = time.time()
-        with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(self.pixelPorPixel, img, user_gray) for img in images]
-
+        with ThreadPoolExecutor(max_workers=self.num_threads) as executor:
+            futures = [
+                executor.submit(self.pixelPorPixel, img, user_gray) 
+                for img in images
+            ]
 
             for future in futures:
                 score, filename = future.result()

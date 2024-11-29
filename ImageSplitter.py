@@ -70,10 +70,8 @@ class ImageSplitter:
 # Uso do código
 
 if __name__ == "__main__":
-    print("tete")
     root_folder = r"C:\Users\arthu\OneDrive\Documentos\puc6periodo\TI6\TI6OnePieceFinder2000\EpFrames20x15"
     output_path = r"C:\Users\arthu\OneDrive\Documentos\puc6periodo\TI6\EpFrames20x15_Split"
-    print("tete")
 
     splitter = ImageSplitter(root_folder, output_path)
     splitter.split_folder_images()
