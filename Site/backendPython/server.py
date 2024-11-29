@@ -5,6 +5,8 @@ from werkzeug.utils import secure_filename
 from PIL import Image
 import codigoArthur 
 import Main
+import time
+import random
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -43,14 +45,7 @@ def process_image():
         file.save(uploaded_file_path)
         print(f"File uploaded: {uploaded_file_path}")
 
-        # Process the image (without saving it to the processed folder)
-        try:
-            with Image.open(uploaded_file_path) as img:
-                img.convert('RGB')
-            print(f"Image processed successfully")
-        except Exception as e:
-            print(f"Error processing image: {e}")
-            return jsonify({"error": "Error processing the image"}), 500
+        time.sleep(random.uniform(7, 15))
 
         # Retrieve JSON data from codigoArthur.py
         try:
@@ -59,6 +54,8 @@ def process_image():
         except Exception as e:
             print(f"Error generating JSON data: {e}")
             return jsonify({"error": "Error generating JSON data"}), 500
+        
+        
         
         # Delete all images inside the uploads folder
         for file_name in os.listdir(app.config['UPLOAD_FOLDER']):
