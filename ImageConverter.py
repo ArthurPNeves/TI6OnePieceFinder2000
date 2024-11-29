@@ -39,8 +39,8 @@ class ImageConverter:
 
 # Exemplo de uso
 if __name__ == "__main__":
-    root_folder = r"C:\Users\arthu\OneDrive\Documentos\puc6periodo\TI6\TI6OnePieceFinder2000\EpFrames"
-    output_path = r"C:\Users\arthu\OneDrive\Documentos\puc6periodo\TI6\EpFramesGray"
+    root_folder = r".\EpFrames20x15"
+    output_path = r".\EpFrames20x15_grey"
 
     # Garantir que a pasta de saída exista
     if not os.path.exists(output_path):
