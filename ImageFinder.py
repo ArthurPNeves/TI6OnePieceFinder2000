@@ -148,6 +148,38 @@ class ImageFinder:
     
         return images
     
+    def compareImagesWithSSIM(user_image, image_paths):
+        """
+        Compara a imagem do usuário com uma lista de caminhos de imagens usando o SSIM.
+        """
+        ssim_scores = []
+        user_gray = cv2.cvtColor(user_image, cv2.COLOR_BGR2GRAY)
+    
+        print("Carregando imagens e comparando...")
+        start_time = time.time()
+    
+        # Processamento paralelo para calcular SSIM
+        with ThreadPoolExecutor() as executor:
+            futures = [executor.submit(ImageFinder.calculate_ssim, image_path, user_gray) for image_path in image_paths]
+    
+            for future in futures:
+                score, filename = future.result()
+                ssim_scores.append((score, filename))
+    
+        end_time = time.time()
+        print(f"Tempo total de comparação: {end_time - start_time:.2f} segundos")
+    
+        # Ordenar imagens pelo SSIM
+        print("Ordenando imagens...")
+        start_sort_time = time.time()
+        ssim_scores.sort(reverse=True, key=lambda x: x[0])  # Maior SSIM primeiro
+        end_sort_time = time.time()
+        print(f"Tempo total de ordenação: {end_sort_time - start_sort_time:.2f} segundos")
+    
+        # Retorna as N imagens mais semelhantes
+        top_matches = ssim_scores[:100]
+        return top_matches
+
 
     def compare_images(self, user_image, folder_path):
         ssim_scores = []

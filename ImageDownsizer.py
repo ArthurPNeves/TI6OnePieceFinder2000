@@ -2,7 +2,7 @@ import cv2
 import os
 
 class ImageDownsizer:
-    def __init__(self, scale_factor=0.5):
+    def __init__(self, scale_factor=0.0625):
         self.scale_factor = scale_factor
 
     def downscale_image(self, image):
@@ -15,26 +15,39 @@ class ImageDownsizer:
 
     def downscale_folder_images(self, input_folder, output_folder):
         """
-        Reduz a escala de todas as imagens na pasta de entrada e as salva na pasta de saída.
+        Reduz a escala de todas as imagens na pasta de entrada, percorrendo subpastas, 
+        e salva na pasta de saída mantendo a estrutura de diretórios.
         """
-        # Cria a pasta de saída, se não existir
-        if not os.path.exists(output_folder):
-            os.makedirs(output_folder)
+        for root, dirs, files in os.walk(input_folder):
+            # Cria o caminho correspondente na pasta de saída
+            relative_path = os.path.relpath(root, input_folder)
+            current_output_folder = os.path.join(output_folder, relative_path)
 
-        # Percorre todas as imagens na pasta de entrada
-        for filename in os.listdir(input_folder):
-            input_path = os.path.join(input_folder, filename)
+            if not os.path.exists(current_output_folder):
+                os.makedirs(current_output_folder)
 
-            # Verifica se é um arquivo de imagem
-            if os.path.isfile(input_path) and filename.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff')):
-                # Carrega a imagem
-                image = cv2.imread(input_path)
+            # Processa todos os arquivos na pasta atual
+            for filename in files:
+                input_path = os.path.join(root, filename)
 
-                # Reduz a escala da imagem
-                downscaled_image = self.downscale_image(image)
+                # Verifica se é um arquivo de imagem
+                if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff')):
+                    # Carrega a imagem
+                    image = cv2.imread(input_path)
 
-                # Define o caminho de saída
-                output_path = os.path.join(output_folder, filename)
+                    if image is not None:  # Confirma que a imagem foi carregada corretamente
+                        # Reduz a escala da imagem
+                        downscaled_image = self.downscale_image(image)
 
-                # Salva a imagem redimensionada na pasta de saída
-                cv2.imwrite(output_path, downscaled_image)
+                        # Define o caminho de saída
+                        output_path = os.path.join(current_output_folder, filename)
+
+                        # Salva a imagem redimensionada na pasta de saída
+                        cv2.imwrite(output_path, downscaled_image)
+
+# Uso do código
+root_folder = r"C:\Users\arthu\OneDrive\Documentos\puc6periodo\TI6\TI6OnePieceFinder2000\EpFrames"
+output_path = r"C:\Users\arthu\OneDrive\Documentos\puc6periodo\TI6\EpFrames40x30"
+
+downsizer = ImageDownsizer(scale_factor=0.0625)
+downsizer.downscale_folder_images(root_folder, output_path)
