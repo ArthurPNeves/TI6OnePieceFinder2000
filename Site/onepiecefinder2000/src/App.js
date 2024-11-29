@@ -5,7 +5,7 @@ import "./App.css";
 
 function App() {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [processedImage, setProcessedImage] = useState(null); // State to store processed image URL
+  const [jsonResult, setJsonResult] = useState(null); // State to store the received JSON result
 
   const handleUploadClick = async () => {
     if (!selectedImage) {
@@ -23,9 +23,8 @@ function App() {
       });
 
       if (response.ok) {
-        const blob = await response.blob();
-        const imageUrl = URL.createObjectURL(blob); // Convert the blob to a URL for display
-        setProcessedImage(imageUrl); // Update the state with the received image
+        const json = await response.json(); // Parse JSON response
+        setJsonResult(json); // Update the state with the JSON result
         alert("Image processed successfully!");
       } else {
         console.error("Error uploading image:", response.statusText);
@@ -37,18 +36,19 @@ function App() {
 
   return (
     <>
-    <Handler />
-    <div className='app-background'>
-      <h1>Upload and Process Your Image</h1>
-      <WantedPoster onImageSelect={setSelectedImage} />
-      <button onClick={handleUploadClick}>Upload and Process</button>
-      {processedImage && ( // Display the processed image below the button
-        <div style={{ marginTop: "20px" }}>
-          <h2>Processed Image:</h2>
-          <img src={processedImage} alt="Processed" style={{ width: "300px", height: "auto" }}/>
-        </div>
-      )}
-    </div>
+      <Handler />
+      <div className="app-background">
+        <h1>Upload and Process Your Image</h1>
+        <WantedPoster onImageSelect={setSelectedImage} />
+        <button onClick={handleUploadClick}>Upload and Process</button>
+        {jsonResult && (
+          <div style={{ marginTop: "20px" }}>
+            <h2>Processed Result:</h2>
+            <p><strong>Episodio:</strong> {jsonResult.Episodio}</p>
+            <p><strong>Segundos:</strong> {jsonResult.Segundos}</p>
+          </div>
+        )}
+      </div>
     </>
   );
 }
