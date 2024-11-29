@@ -10,7 +10,7 @@ def save_images_to_lmdb(folder_path, lmdb_path):
     :param lmdb_path: Caminho onde o banco LMDB será salvo.
     """
     # Define o tamanho máximo do banco de dados
-    map_size = 10 * 1024 * 1024  # 10 GB, ajuste conforme necessário
+    map_size = 40 * 1024 * 1024  # 10 GB, ajuste conforme necessário
     
     # Cria o ambiente LMDB
     env = lmdb.open(lmdb_path, map_size=map_size)
@@ -41,5 +41,4 @@ def process_subfolders(parent_folder):
             save_images_to_lmdb(subfolder_path, lmdb_path)
 
 # Exemplo de uso
-if __name__ == "__main__":
-    process_subfolders(r"C:\Users\arthu\OneDrive\Documentos\puc6periodo\TI6\TI6OnePieceFinder2000\EpFrames20x15")
+process_subfolders(r".\t2")
