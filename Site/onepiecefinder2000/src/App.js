@@ -17,7 +17,7 @@ function App() {
     formData.append("image", selectedImage);
 
     try {
-      const response = await fetch("http://34.201.71.5:5000/api/process", {
+      const response = await fetch("http://54.81.167.53:5000/api/process", {
         method: "POST",
         body: formData,
       });
