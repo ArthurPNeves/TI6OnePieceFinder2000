@@ -2,7 +2,7 @@ import cv2
 import time
 from concurrent.futures import ThreadPoolExecutor
 from skimage.metrics import structural_similarity as ssim
-import ImageDownsizer, ImageFinder, ImageConverter, ImageSplitter, EpisodeToFrames
+import  ImageFinder
 
 
 """
@@ -106,4 +106,4 @@ if __name__ == '__main__':
     print("As 3 imagens mais semelhantes são:")
     for score, filename in top3:
         print(f"{filename} com SSIM: {score:.4f}")
-    ####
+    
